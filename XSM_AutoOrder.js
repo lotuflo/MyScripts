@@ -116,20 +116,23 @@ function takeMyOrder(){
 
 function automatically(){
 	// 1.第一次检查 第二次选购
-	// if(checkFlag==true&&myOrderFlag==true){
-	// 	checknum()
-	// 	debugger
-	// 	setTimeout(automatically,3000)
-	// 	//替换成监听器
-	// }else if(checkFlag==false&&myOrderFlag==true){
-	// 	takeMyOrder()
-	// 	alert('自动选购完毕，请检查！')
-	// }else{
-	// 	alert('请刷新页面后再试')
-	// }
+	if(checkFlag==true&&myOrderFlag==true){
+		checknum()
+		// debugger
+		setTimeout(automatically,3000)
+		//替换成监听器
+	}else if(checkFlag==false&&myOrderFlag==true){
+		takeMyOrder()
+        //点击排序
+        $('#kyl-btn').trigger('click');
+		$('#kyl-btn').trigger('click');
+		alert('自动选购完毕，请检查！')
+	}else{
+		alert('请刷新页面后再试')
+	}
 
-	checknum()
-	takeMyOrder()
+	// checknum()
+	// takeMyOrder()
 
 }
 
