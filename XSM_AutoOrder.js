@@ -4,6 +4,7 @@
 // @version      0.1
 // @description  try to take over the world!
 // @author       You
+
 // @match        http://gd.xinshangmeng.com:9090/eciop/orderForCC/*
 // @grant        window.onload
 // @grant        none
@@ -13,7 +14,7 @@
 
 
 function mychange(a) {
-	// 样式
+	// 传入a标签修改样式
 	let style = "display: block; padding: 10px 0 10px 20px; text-decoration: none;";
 	let defaultStyle = style + "color: #333333;";
 	let hoverStyle = style + "color: #ffffff; background-color: #666666;";
@@ -50,11 +51,11 @@ function addBox() {
 
 	let a = document.createElement('a')
 	mychange(a);
-	a.innerText = '1仅检查可用量'
+	a.innerText = '模拟检查'
 
 	let b = document.createElement('a')
 	mychange(b);
-	b.innerText = '2根据可用选购'
+	b.innerText = '可购全选'
 
 	let c = document.createElement('a')
 	mychange(c);
@@ -65,9 +66,8 @@ function addBox() {
 	c.onclick = automatically;
 	div.appendChild(a)
 	div.appendChild(b)
-	//div.appendChild(c) 存在bug
+	div.appendChild(c)
 };
-
 var $ = window.$
 //获取烟种数量
 var sum = $('#newul').find('li').length
@@ -77,18 +77,21 @@ var dBnts = $('em.suba');
 var myOrderFlag = true
 var checkFlag = true
 function checknum() {
-	var $ = window.$
+	//模拟每一行点击一次 从而获得可订购数
 	var onBlur = window.onBlur
 	if(checkFlag){
 		//更新数据
-		for (var i = 0; i < sum; i++) {
+		for (var i = 0; i < sum; i++) {//必须
 			//模拟第一次点击  更新此行的可用量
 			$(pBnts[i]).trigger('click');
+			//~需要优化获取id方式
+			//给这个函数,烟id 行数 以及订购数不为0,该函数会自动获取数量框的值并提交
 			onBlur($($('.cgt-big-img-switch')[i]).attr('data-cgt-code'), i + 1);
 		}
-		for (i = 0; i < sum; i++) {
-			$(dBnts[i]).trigger('click');
-		}
+		// for (i = 0; i < sum; i++) {
+		// 	$(dBnts[i]).trigger('click');
+		// 	onBlur($($('.cgt-big-img-switch')[i]).attr('data-cgt-code'), i + 1);
+		// }
 		checkFlag = false
 	}else{
 		alert('请刷新页面后再试')
@@ -96,28 +99,14 @@ function checknum() {
 }
 
 function takeMyOrder(){
-	var $ = window.$
 	var onBlur = window.onBlur
 	if(myOrderFlag){
-
 		for (var i = 0; i < sum; i++){
 			//find 当前行对应的可用量
 			var num = parseInt($($('#newul').find('li')[i]).find('span.cgt-col-qtl-lmt').html());
-			//有多少，订多少；没有则选0
-			if (num > 0) {
-				for (var j = 0; j < num; j++) {
-					//按可用量点击增加按钮
-					$(pBnts[i]).trigger('click');
-				}
-			} else {
-				//点击一次减按钮
-				$(dBnts[i]).trigger('click');
-			}
-			//更新选购数据
+			//有多少，订多少
+			$("input[name=req_qty]")[i].value = num;
 			onBlur($($('.cgt-big-img-switch')[i]).attr('data-cgt-code'), i + 1);
-			//
-			//1.如果存在行数据 则自动识别成功
-			//2，反之 最大的问题数量为1的无法正常提交数据
 		}
 		myOrderFlag = false
 	}else{
@@ -127,17 +116,20 @@ function takeMyOrder(){
 
 function automatically(){
 	// 1.第一次检查 第二次选购
-	if(checkFlag==true&&myOrderFlag==true){
-		checknum()
-		debugger
-		setTimeout(automatically,3000)
-		//替换成监听器
-	}else if(checkFlag==false&&myOrderFlag==true){
-		takeMyOrder()
-		alert('自动选购完毕，请检查！')
-	}else{
-		alert('请刷新页面后再试')
-	}
+	// if(checkFlag==true&&myOrderFlag==true){
+	// 	checknum()
+	// 	debugger
+	// 	setTimeout(automatically,3000)
+	// 	//替换成监听器
+	// }else if(checkFlag==false&&myOrderFlag==true){
+	// 	takeMyOrder()
+	// 	alert('自动选购完毕，请检查！')
+	// }else{
+	// 	alert('请刷新页面后再试')
+	// }
+
+	checknum()
+	takeMyOrder()
 
 }
 
@@ -146,6 +138,5 @@ function automatically(){
 	//当且仅当我的脚本运行结束后，onblur函数才会执行
 	'use strict';
 	// Your code here...
-	var $ = window.$
 	addBox();
 })();
