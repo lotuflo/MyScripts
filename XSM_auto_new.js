@@ -74,11 +74,12 @@
 					return;
 				}
 			case 0:
+				$('#mydiv a')[0].text = '请稍后...';
 				checknum();
 				setTimeout(takeMyOrder, time);
 				break;
 			case 1:
-				alert('已完成自动订购,请勿重复操作');
+				alert('请勿重复操作');
 				break;
 		}
 	}
