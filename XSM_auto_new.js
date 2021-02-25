@@ -13,7 +13,7 @@
 	// Your code here...
 	var $ = window.$;
 	var onBlur = window.onBlur;
-	var time = 10;
+	var time = 1500;
 	//获取烟种数量
 	var sum = $('#newul').find('li').length;
 	//获取所有按钮
@@ -63,17 +63,16 @@
 	function automatically() {
 		// 1.第一次检查 第二次选购
 		// 0可继续 1完成 -1异常重置操作
-		if (flag == -1) {
-            console.log('记录'+time);
-			time = time + 2000;
-			if(time < 15000){
-				flag = 0;
-			}else{
-				alert('操作超时,请检查网络');
-				return;
-			}
-		}
 		switch (flag) {
+			case -1:
+				console.log('记录' + time);
+				time = time + 2000;
+				if (time < 15000) {
+					flag = 0;
+				} else {
+					alert('操作超时,请检查网络');
+					return;
+				}
 			case 0:
 				checknum();
 				setTimeout(takeMyOrder, time);
