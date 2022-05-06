@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         新商盟自动选购
 // @namespace    http://tampermonkey.net/
-// @version      1.0
+// @version      2.0
 // @description  try to take over the world!
 // @author       You
 // @match        http://gd.xinshangmeng.com:9090/eciop/orderForCC/*
