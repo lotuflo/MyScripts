@@ -1,0 +1,91 @@
+// ==UserScript==
+// @name         广东平台自动订购
+// @namespace    http://tampermonkey.net/
+// @version      2.0
+// @description  try to take over the world!
+// @author       You
+// @match        https://www.yueyigou.com/wdk?action=ecw.page&method=display&site_id=maoming&inclient=&page_id=page_buy
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=yueyigou.com
+// @grant        none
+// ==/UserScript==
+
+(function() {
+    'use strict';
+    //1.大于1的有时候只订了1
+    //2.checked Out of stock items
+    // 查询剩余量
+
+    // 创建悬浮 div 元素
+    var floatingDiv = document.createElement('div');
+    floatingDiv.style.position = 'fixed';
+    floatingDiv.style.bottom = '20px';
+    floatingDiv.style.right = '20px';
+    floatingDiv.style.padding = '10px';
+    floatingDiv.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+    floatingDiv.style.color = 'white';
+    floatingDiv.style.borderRadius = '5px';
+    floatingDiv.style.zIndex = '9999';
+
+    // 创建按钮元素并添加到悬浮 div 中
+    var button = document.createElement('button');
+    button.textContent = '一键订购';
+    button.style.padding = '5px 10px';
+    button.style.backgroundColor = 'blue';
+    button.style.color = 'white';
+    button.style.border = 'none';
+    button.style.cursor = 'pointer';
+
+    /* globals jQuery, $, waitForKeyElements */
+    /* globals reqQtyBlur */
+
+    button.addEventListener('click', function() {
+        // 在这里执行点击按钮后的操作
+        $('div.cq_buy_main_grid_row[name="buy_dtl"]').each(function(index, element) {
+            // 判断如果是长城长城(红色132),助记码:
+            /*
+            var blackItemList = [510233, 510244, 510245, 510248];
+            var blackItem = $(element).find('div.cq_buy_main_product_pic[imagemain]').text()
+            if (blackItemList.includes( blackItem )) {
+                delete window.focusrow;
+                console.log("助记码包含'长城'");
+            } */
+            //判读烟名
+            var namestr = $(element).find('div.cq_buy_main_product_name[name=product_name]').text()
+            var pattern = /^长城/;
+            if (pattern.test(namestr)) {
+                console.log("字符串中包含'长城'");
+                delete window.focusrow;
+                return;
+            }
+            // 在这里对每个选定的元素执行操作
+            //console.log($(element).text()); // 以示例，使用 jQuery 获取元素的文本内容并打印
+            $(element).find('[name=req_qty]').prop('req_qty', 1);
+            window.focusrow = $(element);
+            reqQtyBlur();
+
+            // 获取最大可购量
+            // 在这里对每个选定的元素执行操作
+            var maxOrderNum = $(element).find('div.cq_buy_main_grid_c8[name=lmtqty]').text();
+            //console.log(maxOrderNum);
+
+            // 全部订购
+            window.focusrow = $(element);
+            var currentMyRow = $(element).find('[name=req_qty]');
+            currentMyRow.prop('value', maxOrderNum);
+            currentMyRow.prop('req_qty', maxOrderNum);
+
+            // 恢复不正常的需求量为0
+            if (maxOrderNum == 0) {
+                $(element).find('div.req_qty_container[name=req_qty]').text(0);
+            }
+
+            
+            reqQtyBlur();
+        });
+    });
+
+    floatingDiv.appendChild(button);
+
+    // 将悬浮 div 添加到页面中
+    document.body.appendChild(floatingDiv);
+})();
