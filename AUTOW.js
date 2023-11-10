@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         AUTO
+// @name         AUTOW
 // @namespace    http://tampermonkey.net/
 // @version      0.1
 // @description  try to take over the world!
@@ -27,7 +27,7 @@
   var button = document.createElement('button');
   button.textContent = 'AUTO';
   button.style.padding = '5px 10px';
-  button.style.backgroundColor = 'blue';
+  button.style.backgroundColor = 'rgb(147, 197, 114)';
   button.style.color = 'white';
   button.style.border = 'none';
   button.style.cursor = 'pointer';
