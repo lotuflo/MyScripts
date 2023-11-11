@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         AUTOW
+// @name         AUTO
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.2
 // @description  try to take over the world!
 // @author       You
 // @match        https://jinjianghotels.udesk.cn/entry/analysis/im/record/index?end_date=&search=&start_date=&urlParams=
@@ -32,21 +32,38 @@
   button.style.border = 'none';
   button.style.cursor = 'pointer';
   button.addEventListener('click', function() {
+    //专门点击最后一个
+
+    var evt = document.createEvent("MouseEvents");
+    evt.initEvent("mousedown", true, true);
+    var masks = document.querySelectorAll('div.udesk-webapp-ts-react-select-selector'); // 获取触发事件的元素
+    if (masks.length > 0) {
+      masks[masks.length - 1].dispatchEvent(evt)
+    }
+    let eles = $('div.udesk-webapp-ts-react-select-item.udesk-webapp-ts-react-select-item-option');
+    //先选择it模板
+    $(eles[0]).click()
+    //刷新
+    masks = document.querySelectorAll('div.udesk-webapp-ts-react-select-selector');
+    //触发生成所有子选项
+    for (var i = 3; i < masks.length; i++) {
+      masks[i].dispatchEvent(evt);
+    }
     //触发生成子选项
     //修改状态为已关闭
-    let eles = $('div.udesk-webapp-ts-react-select-item.udesk-webapp-ts-react-select-item-option')
-    $(eles[3]).click()
+    eles = $('div.udesk-webapp-ts-react-select-item.udesk-webapp-ts-react-select-item-option');
+    $(eles[3]).click();
     //修改优先级为低
-    $(eles[7]).click()
+    $(eles[7]).click();
     //选择IT标准模板
     //$(eles[8]).click()
     //选择影响度
-    $(eles[13]).click()
+    $(eles[24]).click();
     //选择服务方式
-    $(eles[19]).click()
+    $(eles[30]).click();
     //选择问题类型
-    $(eles[21]).click()
-    $('textarea#TextField_197401').text('已告知')
+    $(eles[32]).click();
+    //$('textarea#TextField_197401').text('已告知')
   });
   floatingDiv.appendChild(button);
 
