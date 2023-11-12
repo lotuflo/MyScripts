@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         AUTO
+// @name         AUTOW
 // @namespace    http://tampermonkey.net/
-// @version      0.2
+// @version      0.3
 // @description  try to take over the world!
 // @author       You
 // @match        https://jinjianghotels.udesk.cn/entry/analysis/im/record/index?end_date=&search=&start_date=&urlParams=
@@ -31,39 +31,41 @@
   button.style.color = 'white';
   button.style.border = 'none';
   button.style.cursor = 'pointer';
-  button.addEventListener('click', function() {
-    //专门点击最后一个
+  // 添加按下去的动画效果反馈
+  button.addEventListener('mousedown', function() {
+    button.style.transform = 'scale(0.95)';
+  });
 
+  button.addEventListener('mouseup', function() {
+    button.style.transform = 'scale(1)';
+  });
+  button.addEventListener('click', function() {
+    // 找框√
     var evt = document.createEvent("MouseEvents");
     evt.initEvent("mousedown", true, true);
-    var masks = document.querySelectorAll('div.udesk-webapp-ts-react-select-selector'); // 获取触发事件的元素
+    var masks = document.querySelectorAll('div.udesk-webapp-ts-react-select-selector');
     if (masks.length > 0) {
       masks[masks.length - 1].dispatchEvent(evt)
     }
-    let eles = $('div.udesk-webapp-ts-react-select-item.udesk-webapp-ts-react-select-item-option');
+    //这个X
+    let str = 'div.udesk-webapp-ts-react-select-item.udesk-webapp-ts-react-select-item-option[title=';
     //先选择it模板
-    $(eles[0]).click()
-    //刷新
+    $(str + 'IT服务模板]').click()
+    //刷新框的数量
     masks = document.querySelectorAll('div.udesk-webapp-ts-react-select-selector');
-    //触发生成所有子选项
+    //触发所有框生成所有子选项
     for (var i = 3; i < masks.length; i++) {
       masks[i].dispatchEvent(evt);
     }
-    //触发生成子选项
     //修改状态为已关闭
-    eles = $('div.udesk-webapp-ts-react-select-item.udesk-webapp-ts-react-select-item-option');
-    $(eles[3]).click();
-    //修改优先级为低
-    $(eles[7]).click();
-    //选择IT标准模板
-    //$(eles[8]).click()
-    //选择影响度
-    $(eles[24]).click();
+    $(str + '已关闭]').click();
+    //修改优先级和影响度为低
+    $(str + '低]').click();
     //选择服务方式
-    $(eles[30]).click();
+    $(str + '其它支持]').click();
     //选择问题类型
-    $(eles[32]).click();
-    //$('textarea#TextField_197401').text('已告知')
+    $(str + '操作问题]').click();
+    $('textarea#TextField_197401').text('已告知').val('已告知')
   });
   floatingDiv.appendChild(button);
 
