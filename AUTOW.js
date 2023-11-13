@@ -1,9 +1,10 @@
 // ==UserScript==
 // @name         AUTOW
 // @namespace    http://tampermonkey.net/
-// @version      0.3
+// @version      0.5
 // @description  try to take over the world!
 // @author       You
+// @match        https://jinjianghotels.udesk.cn/entry/im
 // @match        https://jinjianghotels.udesk.cn/entry/analysis/im/record/index?end_date=&search=&start_date=&urlParams=
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=udesk.cn
 // @grant        none
@@ -12,40 +13,88 @@
 (function() {
   'use strict';
 
-  // 创建悬浮 div 元素
-  var floatingDiv = document.createElement('div');
-  floatingDiv.style.position = 'fixed';
-  floatingDiv.style.bottom = '20px';
-  floatingDiv.style.right = '20px';
-  floatingDiv.style.padding = '10px';
-  floatingDiv.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-  floatingDiv.style.color = 'white';
-  floatingDiv.style.borderRadius = '5px';
-  floatingDiv.style.zIndex = '9999';
+  function tip() {
+    // 创建提示元素
+    var tooltip = document.createElement('div');
+    tooltip.textContent = '请检查';
+    tooltip.style.position = 'fixed';
+    tooltip.style.bottom = '50px';
+    tooltip.style.right = '80px';
+    tooltip.style.padding = '10px';
+    tooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+    tooltip.style.color = 'white';
+    tooltip.style.borderRadius = '5px';
+    tooltip.style.zIndex = '9999';
 
-  // 创建按钮元素并添加到悬浮 div 中
+    // 将提示元素添加到文档中
+    document.body.appendChild(tooltip);
+
+    // 设置定时器，在3秒后自动移除提示元素
+    setTimeout(function() {
+      document.body.removeChild(tooltip);
+    }, 1000);
+  }
+  var movedFlag = false; // 将movedFlag变量定义在全局作用域中
+
+  // 创建按钮元素
   var button = document.createElement('button');
+  button.id = 'myButton';
   button.textContent = 'AUTO';
-  button.style.padding = '5px 10px';
-  button.style.backgroundColor = 'rgb(147, 197, 114)';
+  button.style.position = 'fixed';
+  button.style.bottom = '50px';
+  button.style.right = '20px';
+  button.style.padding = '5px';
+  button.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
   button.style.color = 'white';
-  button.style.border = 'none';
-  button.style.cursor = 'pointer';
+  button.style.borderRadius = '5px';
+  button.style.zIndex = '9999';
+  button.style.cursor = 'move';
+  var isDragging = false;
+  var dragOffsetX = 0;
+  var dragOffsetY = 0;
   // 添加按下去的动画效果反馈
-  button.addEventListener('mousedown', function() {
+  button.addEventListener('mousedown', function(event) {
     button.style.transform = 'scale(0.95)';
+    isDragging = true;
+    dragOffsetX = event.clientX - button.offsetLeft;
+    dragOffsetY = event.clientY - button.offsetTop;
   });
 
   button.addEventListener('mouseup', function() {
     button.style.transform = 'scale(1)';
+    isDragging = false;
+  });
+
+  document.addEventListener('mousemove', function(event) {
+
+    if (isDragging) {
+      button.style.right = '';
+      button.style.bottom = '';
+      button.style.left = (event.clientX - dragOffsetX) + 'px';
+      button.style.top = (event.clientY - dragOffsetY) + 'px';
+      movedFlag = true;
+    }
   });
   button.addEventListener('click', function() {
+    //判断是否移动,不等于上一次位置则不执行操作
+    if (movedFlag) {
+      movedFlag = false;
+      return;
+    }
+    //判断是否存在请选择IT服务模板没有则不执行
+    if ($('span.udesk-webapp-ts-react-select-selection-item[title=请选择IT服务模板]').length != 1) {
+      tip()
+      return;
+    }
     // 找框√
     var evt = document.createEvent("MouseEvents");
     evt.initEvent("mousedown", true, true);
     var masks = document.querySelectorAll('div.udesk-webapp-ts-react-select-selector');
     if (masks.length > 0) {
       masks[masks.length - 1].dispatchEvent(evt)
+    } else {
+      tip()
+      return;
     }
     //这个X
     let str = 'div.udesk-webapp-ts-react-select-item.udesk-webapp-ts-react-select-item-option[title=';
@@ -65,10 +114,10 @@
     $(str + '其它支持]').click();
     //选择问题类型
     $(str + '操作问题]').click();
-    $('textarea#TextField_197401').text('已告知').val('已告知')
+    //$('textarea#TextField_197401').text('已告知').val('已告知')
   });
-  floatingDiv.appendChild(button);
-
-  // 将悬浮 div 添加到页面中
-  document.body.appendChild(floatingDiv);
+  $(document).ready(function() {
+    // 将悬浮 div 添加到页面中
+    $("body").append(button);
+  })
 })();
