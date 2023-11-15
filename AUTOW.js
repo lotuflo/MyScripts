@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AUTOW
 // @namespace    http://tampermonkey.net/
-// @version      0.5
+// @version      0.6
 // @description  try to take over the world!
 // @author       You
 // @match        https://jinjianghotels.udesk.cn/entry/im
@@ -12,6 +12,8 @@
 /* globals $*/
 (function() {
   'use strict';
+  //全局开关变量
+  let lotuflo = true;
 
   function tip() {
     // 创建提示元素
@@ -39,7 +41,7 @@
   // 创建按钮元素
   var button = document.createElement('button');
   button.id = 'myButton';
-  button.textContent = 'AUTO';
+  button.textContent = 'ON';
   button.style.position = 'fixed';
   button.style.bottom = '50px';
   button.style.right = '20px';
@@ -76,10 +78,36 @@
     }
   });
   button.addEventListener('click', function() {
-    //判断是否移动,不等于上一次位置则不执行操作
+    //修改只剩开关功能
+    lotuflo = !lotuflo;
+    if (lotuflo) {
+      button.textContent = 'ON';
+    } else {
+      button.textContent = 'OFF';
+    }
+  });
+  $(document).ready(function() {
+    // 将悬浮 div 添加到页面中
+    $("body").append(button);
+  })
+
+  //捕捉新建工单按钮而且必须唯一
+  async function execAuto() {
+    if (!lotuflo) {
+      lotuflo
+      return;
+    }
+    //移动了按钮则不执行
     if (movedFlag) {
       movedFlag = false;
       return;
+    }
+
+    var count = 0;
+    while ($('span.udesk-webapp-ts-react-select-selection-item[title=请选择IT服务模板]').length != 1 && count < 10) {
+      // 等待1秒钟
+      setTimeout(function() {}, 1000);
+      count++;
     }
     //判断是否存在请选择IT服务模板没有则不执行
     if ($('span.udesk-webapp-ts-react-select-selection-item[title=请选择IT服务模板]').length != 1) {
@@ -114,10 +142,17 @@
     $(str + '其它支持]').click();
     //选择问题类型
     $(str + '操作问题]').click();
-    //$('textarea#TextField_197401').text('已告知').val('已告知')
+  }
+  $(document).on('click', function(event) {
+
+    //点span或者button都会触发
+    var bnt1 = $($(event)[0].target).find('span').filter(function() {
+      return $(this).text().trim() == '新建工单';
+    }).length == 1;
+    var bnt2 = $($(event)[0].target).text() == '新建工单'
+    var bnt3 = $($(event)[0].target).closest('div.hight-light-icon-wrapper___3lRNO  ').find('span.t-create-ticket').length == 1
+    if (bnt1 || bnt2 || bnt3) {
+      setTimeout(execAuto, 4500);
+    }
   });
-  $(document).ready(function() {
-    // 将悬浮 div 添加到页面中
-    $("body").append(button);
-  })
 })();
