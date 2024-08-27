@@ -1,0 +1,61 @@
+// ==UserScript==
+// @name         新视窗客户合并快速选中
+// @namespace    http://tampermonkey.net/
+// @version      2024-08-27
+// @description  try to take over the world!
+// @author       You
+// @match        https://xsc.agileliving.com.cn:8001/publicInfo/OfficeManagement/ShowSelect/CustomerSelect.aspx*
+// @match       https://xsc.agileliving.com.cn:8001/CrmManagement/ServiceManagement/Services/popHouseSelect.aspx*
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=agileliving.com.cn
+// @grant        none
+// ==/UserScript==
+/* globals $*/
+(function() {
+    'use strict';
+    function customerSelect() {
+        if (typeof window.top.globalVariable === 'undefined') {
+            window.top.globalVariable = new Set();
+        }
+        //填写客户名字
+        $('input#txtCustomerName').val('福建耀璟房地产有限公司')
+        //勾选全字匹配
+        $('input#AllName').click()
+        //勾选个人客户
+        $('input#CblCustomerKind_1').click()
+        //$('input#CblCustomerKind_2').click()删除行前斜杠以勾选企业客户
+        setTimeout(function() {
+            //执行查询
+            $('input#btnQuery').click()
+            // 循环遍历每个元素
+            var flag = 0;
+            $('#divCustomerList > div[customerid]').each(function(index, element) {
+                if (flag) {
+                    return false;
+                }
+                //获取customerId判断服务器是否返回数据
+                var customerId = $(element).attr('customerid');
+                if (!window.top.globalVariable.has(customerId)) {
+                    //执行选中
+                    window.top.globalVariable.add(customerId);
+                    $(this).trigger('dblclick');
+                    flag = 1;
+                }
+            });
+            if (!flag && $('#divCustomerList > div[customerid]').length > 0) {
+                alert("已全部选中"); //刷新网页可重置此提示
+            }
+        }, 100);
+    }
+    //自动确定"业主多套房产"的二次弹窗
+    function popHouseSelect() {
+        setTimeout(function() {
+            document.querySelector('input[name="btnSure"]').click();
+        }, 1000);
+    }
+    const currentUrl = window.location.href;
+    if (currentUrl.includes('CustomerSelect.aspx')) {
+        customerSelect();
+    } else if (currentUrl.includes('popHouseSelect.aspx')) {
+        popHouseSelect();
+    }
+})();
