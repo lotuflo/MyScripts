@@ -7,7 +7,11 @@ function waitAsync(milliseconds) {
 
 async function run() {
     const data = [
-     
+     {
+        "终端别名": "   ",
+        "用户查询账号": "   ",
+        "终端号": "  "
+    },
     ];
 
     // Use for...of to iterate over the data array
@@ -30,6 +34,7 @@ async function run() {
         await waitAsync(1500);
         var termId = `${item["终端号"]}`;
         var iconElement = $('td:contains("' + termId + '")').closest('tr').find('i.layui-icon.layui-icon-ok').click();
+		await waitAsync(1000);
         $('button.layui-btn[lay-filter="userFrm"]:contains("确定")').click();
         await waitAsync(4000);
 		console.log(`${item["终端号"]}`);
