@@ -1,26 +1,40 @@
-//把整个内容搞为异步函数，然后把需要等候的隔离出去
-function waitAsync() {
+// Async function that returns a promise
+function waitAsync(milliseconds) {
     return new Promise((resolve) => {
-        setTimeout(() =>{resolve();},2500)
+        setTimeout(() => { resolve(); }, milliseconds);
     });
 }
+
 async function run() {
-    const data = [];
-    data.forEach(item => {
-            $('button.layui-btn[layuimini-href="/cashierUser/goToPage.fuiou?operator=add"]').click();
-            await waitAsync();
-            $('input[name="name"').val(`${item["终端别名"]}`);
-            $('input[name="pwd"').val('agile1234');
-			$('input[name="managePwd"').val('agile3319');
-			$('input[placeholder="直接选择或搜索选择"]').click();
-			$('dd:contains("S5:[收银员]")').click();
-			$('input[name="loginId"').val(`${item["用户查询账号"]}`);
-            $('div:contains("终端绑定")').siblings('i').click() $('input[placeholder="请输入终端号"]').val(`${item["终端号"]}`);
-            $('button.layui-btn[lay-filter="searchTermFrm-btn"]:contains("查询")').click()
-			await waitAsync();
-			var termId = `${item["终端号"]}`;
-            var iconElement = $('td:contains("' + termId + '")').closest('tr').find('i.layui-icon.layui-icon-ok').click();
-			$('button.layui-btn[lay-filter="userFrm"]:contains("确定")').click();
-			await waitAsync();
-    });
+    const data = [
+     
+    ];
+
+    // Use for...of to iterate over the data array
+    for (const item of data) {
+        // Use await inside an async function
+        $('button.layui-btn[layuimini-href="/cashierUser/goToPage.fuiou?operator=add"]').click();
+        await waitAsync(2500);
+
+        $('input[name="name"]').val(`${item["终端别名"]}`);
+        $('input[name="pwd"]').val('agile1234');
+        $('input[name="managePwd"]').val('agile3319');
+        $('input[placeholder="直接选择或搜索选择"]').click();
+        $('dd:contains("S5:[收银员]")').click();
+        await waitAsync(1000);
+        $('input[name="loginId"]').val(`${item["用户查询账号"]}`);
+        $('div:contains("终端绑定")').siblings('i').click();
+        await waitAsync(1000);
+        $('input[placeholder="请输入终端号"]').val(`${item["终端号"]}`);
+        $('button.layui-btn[lay-filter="searchTermFrm-btn"]:contains("查询")').click();
+        await waitAsync(1500);
+        var termId = `${item["终端号"]}`;
+        var iconElement = $('td:contains("' + termId + '")').closest('tr').find('i.layui-icon.layui-icon-ok').click();
+        $('button.layui-btn[lay-filter="userFrm"]:contains("确定")').click();
+        await waitAsync(4000);
+		console.log(`${item["终端号"]}`);
+    }
 }
+
+// Execute the run function
+run();
