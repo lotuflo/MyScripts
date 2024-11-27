@@ -7,11 +7,11 @@ function waitAsync(milliseconds) {
 
 async function run() {
     const data = [
-     {
-        "终端别名": "   ",
-        "用户查询账号": "   ",
+    {
+        "终端别名": "  ",
+        "用户查询账号": "  ",
         "终端号": "  "
-    },
+    }
     ];
 
     // Use for...of to iterate over the data array
@@ -39,6 +39,7 @@ async function run() {
         await waitAsync(4000);
 		console.log(`${item["终端号"]}`);
     }
+    waitAsync().then()
 }
 
 // Execute the run function
