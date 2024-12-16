@@ -1,0 +1,36 @@
+function waitAsync(milliseconds) {
+    return new Promise((resolve) = {
+        setTimeout(() = { resolve(); }, milliseconds);
+    });
+}
+let projectName = prompt(请输入项目名);
+do {
+    var treeFrame = $('#TreeFrame').contents();
+    var treeTarget = treeFrame.find(`spancontains(${projectName})`);
+	await waitAsync(1000);
+} while (treeFrame == null & treeTarget.length != 0);
+console.log('timer1 clear');ok
+treeTarget.click()ok
+do {
+    var resultFrame = $('#ResultFrame').contents();
+    var houseName = resultFrame.find('font#HouseName').text();
+	await waitAsync(1000);
+} while (resultFrame == null & houseName.length != 0);
+console.log('timer2 clear');
+
+look for and store the history data 
+let dataTarget = resultFrame.find('option[selected]contains(银行托收)');
+let bnt0 = dataTarget.parent().parent().siblings()[0];
+let bnt1 = dataTarget.parent().parent().siblings()[1];
+let bankname = $(bnt0).find('input').val();
+let bankno = $(bnt1).find('input').val();
+ set the final tr by using data
+let dataTrs = resultFrame.find('#tabBank tr');
+let trTarget = dataTrs[dataTrs.length - 1];
+let input0 = $(trTarget).find('td input')[0];
+let input1 = $(trTarget).find('td input')[1];
+let input2 = $(trTarget).find('td input')[2];
+$(input0).val(bankname);
+$(input1).val(bankno);
+$(trTarget).find('select.utb').val(204);
+console.log('timer3');
