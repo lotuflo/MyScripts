@@ -1,30 +1,78 @@
+let banknoList = ['510801040002929',
+'44001551505053002141',
+'3602085619100183641',
+'2011054719100011612',
+'44050177827600000028',
+'453901040005671',
+'44001491101053012871',
+'644469718711',
+'2013014219200017844',
+'44050166004100000379',
+'44050153142200000531',
+'38711388000000563',
+'38711388000000563',
+'44096301040003680',
+'2011054719000012162',
+'3602024419200768949',
+'3602024419200768949',
+'3602024419200768949',
+'3602024419200768949',
+'438001040010274',
+'44050153141200000339',
+'44050153141200000339',
+'044801040000282',
+'44200201040199996',
+'44087401040002400',
+'44231001040037144',
+'2008032709000023840',
+'2011054719000011535',
+'2011054719000011783',
+'44584801040006517',
+'44189301040003027',
+'695171941497',
+'2011054719100008020',
+'44001667110053003610',
+'2011054719000011659',
+'467001040028148',
+'2017016309000027710',
+'44001780352053081537',
+'2011054719000000328',
+'531301040006272',
+'2011054719100005438',
+'44050175864300000157',
+'44557101040021498',
+'2011054719000011934',
+'092501040006302',
+'44616001040016721']
 function waitAsync(milliseconds) {
-    return new Promise((resolve) = {
-        setTimeout(() = { resolve(); }, milliseconds);
+    return new Promise((resolve) => {
+        setTimeout(() => { resolve(); }, milliseconds);
     });
 }
-let projectName = prompt(请输入项目名);
+
+	let projectName = prompt("请输入项目名:");
 do {
     var treeFrame = $('#TreeFrame').contents();
-    var treeTarget = treeFrame.find(`spancontains(${projectName})`);
+    var treeTarget = treeFrame.find(`span:contains("${projectName}")`);
 	await waitAsync(1000);
-} while (treeFrame == null & treeTarget.length != 0);
-console.log('timer1 clear');ok
-treeTarget.click()ok
+} while (treeFrame == null & treeTarget.length == 0);
+treeTarget.click()//ok
 do {
     var resultFrame = $('#ResultFrame').contents();
     var houseName = resultFrame.find('font#HouseName').text();
 	await waitAsync(1000);
-} while (resultFrame == null & houseName.length != 0);
-console.log('timer2 clear');
+} while (resultFrame == null & houseName.length == 0);
+//check
+let dataTarget = resultFrame.find('option[selected]:contains("银行托收")');
+let checkA = resultFrame.find('option[selected]:contains("银行托收(广银)")');
+if(checkA.length == 1){alert('已存在:银行托收(广银)');}
 
-look for and store the history data 
-let dataTarget = resultFrame.find('option[selected]contains(银行托收)');
+//look for and store the history data 
 let bnt0 = dataTarget.parent().parent().siblings()[0];
 let bnt1 = dataTarget.parent().parent().siblings()[1];
 let bankname = $(bnt0).find('input').val();
 let bankno = $(bnt1).find('input').val();
- set the final tr by using data
+// set the final tr by using data
 let dataTrs = resultFrame.find('#tabBank tr');
 let trTarget = dataTrs[dataTrs.length - 1];
 let input0 = $(trTarget).find('td input')[0];
@@ -33,4 +81,5 @@ let input2 = $(trTarget).find('td input')[2];
 $(input0).val(bankname);
 $(input1).val(bankno);
 $(trTarget).find('select.utb').val(204);
-console.log('timer3');
+console.log('over');
+
