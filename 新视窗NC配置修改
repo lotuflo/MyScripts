@@ -1,26 +1,55 @@
-let banknoList = ['510801040002929',
+// ==UserScript==
+// @name         nc
+// @namespace    http://tampermonkey.net/
+// @version      2024-12-20
+// @description  try to take over the world!
+// @author       You
+// @match        https://xsc.agileliving.com.cn:8001/PropertyManagement/FinancialInterface/K3/NCInterfaceSet.aspx*
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=agileliving.com.cn
+// @grant        none
+// ==/UserScript==
+/* globals $*/
+
+(function() {
+    'use strict';
+    // 创建悬浮按钮
+    const button = document.createElement('button');
+    button.innerHTML = '我的脚本';
+    button.style.position = 'fixed';
+    button.style.top = '150px';
+    button.style.right = '700px';
+    button.style.zIndex = '9999';
+    button.style.padding = '10px';
+    button.style.backgroundColor = 'white';
+    button.style.border = 'none';
+    button.style.color = 'black';
+    button.style.cursor = 'pointer';
+    button.style.borderRadius = '5px';
+    document.body.appendChild(button);
+
+    button.addEventListener('click', function() {
+        changeNcData();
+    });
+	  let banknoList = ['44510801040002929',
 '44001551505053002141',
 '3602085619100183641',
-'2011054719100011612',
 '44050177827600000028',
-'453901040005671',
+'44453901040005671',
 '44001491101053012871',
 '644469718711',
 '2013014219200017844',
-'44050166004100000379',
-'44050153142200000531',
-'38711388000000563',
+'2011054719000012038',
 '38711388000000563',
 '44096301040003680',
 '2011054719000012162',
+'44081501040006404',
+'3602002319200027352',
 '3602024419200768949',
-'3602024419200768949',
-'3602024419200768949',
-'3602024419200768949',
-'438001040010274',
+'44001531412050050935',
+'44438001040010274',
 '44050153141200000339',
-'44050153141200000339',
-'044801040000282',
+'44050153142200000280',
+'44044801040000282',
 '44200201040199996',
 '44087401040002400',
 '44231001040037144',
@@ -33,53 +62,62 @@ let banknoList = ['510801040002929',
 '2011054719100008020',
 '44001667110053003610',
 '2011054719000011659',
-'467001040028148',
+'44467001040028148',
 '2017016309000027710',
 '44001780352053081537',
 '2011054719000000328',
-'531301040006272',
+'44531301040006272',
 '2011054719100005438',
 '44050175864300000157',
 '44557101040021498',
 '2011054719000011934',
-'092501040006302',
-'44616001040016721']
-function waitAsync(milliseconds) {
-    return new Promise((resolve) => {
-        setTimeout(() => { resolve(); }, milliseconds);
-    });
-}
+'44092501040006302',
+'44616001040016721'] 
+  
+    function waitAsync(milliseconds) {
+        return new Promise((resolve) => {
+            setTimeout(() => { resolve(); }, milliseconds);
+        });
+    }
+    async function changeNcData(){
+        let projectName = prompt("请输入项目名:");
+        do {
+            var treeFrame = $('#TreeFrame').contents();
+            var treeTarget = treeFrame.find(`span:contains("${projectName}")`);
+            await waitAsync(1000);
+        } while (treeFrame == null & treeTarget.length == 0);
+        treeTarget.click()//ok
+        do {
+            var resultFrame = $('#ResultFrame').contents();
+            var houseName = resultFrame.find('font#HouseName').text();
+            await waitAsync(1000);
+        } while (resultFrame == null & houseName.length == 0);
+        //check
+        let dataTarget = resultFrame.find('option[selected]:contains("银行托收")').filter(function() {return $(this).text() === "银行托收";});
+        //deal the multiple  scene
+        dataTarget = $(dataTarget[dataTarget.length-1])
+        let checkA = resultFrame.find('option[selected]:contains("银行托收(广银)")');
+        if(checkA.length == 1){alert('已存在:银行托收(广银)');return}
+        if(dataTarget.length != 1){alert('获取异常');return}
 
-	let projectName = prompt("请输入项目名:");
-do {
-    var treeFrame = $('#TreeFrame').contents();
-    var treeTarget = treeFrame.find(`span:contains("${projectName}")`);
-	await waitAsync(1000);
-} while (treeFrame == null & treeTarget.length == 0);
-treeTarget.click()//ok
-do {
-    var resultFrame = $('#ResultFrame').contents();
-    var houseName = resultFrame.find('font#HouseName').text();
-	await waitAsync(1000);
-} while (resultFrame == null & houseName.length == 0);
-//check
-let dataTarget = resultFrame.find('option[selected]:contains("银行托收")');
-let checkA = resultFrame.find('option[selected]:contains("银行托收(广银)")');
-if(checkA.length == 1){alert('已存在:银行托收(广银)');}
+        //look for and store the history data
+        let bnt0 = dataTarget.parent().parent().siblings()[0];
+        let bnt1 = dataTarget.parent().parent().siblings()[1];
+        let bankname = $(bnt0).find('input').val();
+        let bankno = $(bnt1).find('input').val();
+        if(!banknoList.includes(bankno)){alert('银行卡未入网');return}
+        // judge the get value  whether in  the bankno list
+        // set the final tr by using data
+        let dataTrs = resultFrame.find('#tabBank tr');
+        let trTarget = dataTrs[dataTrs.length - 1];
+        let input0 = $(trTarget).find('td input')[0];
+        let input1 = $(trTarget).find('td input')[1];
+        let input2 = $(trTarget).find('td input')[2];
+        $(input0).val(bankname);
+        $(input1).val(bankno);
+        $(trTarget).find('select.utb').val(204);
+        console.log(projectName+"-------"+houseName);
+        resultFrame.find('input#btnSave').click()
+    }
 
-//look for and store the history data 
-let bnt0 = dataTarget.parent().parent().siblings()[0];
-let bnt1 = dataTarget.parent().parent().siblings()[1];
-let bankname = $(bnt0).find('input').val();
-let bankno = $(bnt1).find('input').val();
-// set the final tr by using data
-let dataTrs = resultFrame.find('#tabBank tr');
-let trTarget = dataTrs[dataTrs.length - 1];
-let input0 = $(trTarget).find('td input')[0];
-let input1 = $(trTarget).find('td input')[1];
-let input2 = $(trTarget).find('td input')[2];
-$(input0).val(bankname);
-$(input1).val(bankno);
-$(trTarget).find('select.utb').val(204);
-console.log('over');
-
+})();
